@@ -1,13 +1,14 @@
-\name{mqs}
-\alias{mqs}
-\title{Multiscale Quantile Segmentation}
+\name{MQSE}
+\alias{MQSE}
+\title{Multiscale Quantile Segmentation Estimator}
 \description{Computes the mqs estimator for a given segmentation quantile beta.}
-\usage{mqs(Y, beta, q = NULL, alpha = 0.05, type = "runs")}
+\usage{MQSE(Y, beta, q = NULL, alpha = 0.05, conf = false, type = "runs")}
 \arguments{
   \item{Y}{numeric vector containing the serial data.}
   \item{beta}{numeric value in (0,1) giving the desired segmentation quantile.}
   \item{q}{numeric threshold parameter.}
   \item{alpha}{numeric confidence level in (0,1).}
+  \item{conf}{set to true for the calculation of confidence intervales and confidence bands.}
   \item{type}{specifies loss function for final estimate with multiscale constraint. Currently "runs" and "koenker" available.}
 }
 \value{A {list} with components
@@ -27,11 +28,11 @@ path.med <- MCsimulation(1000, length(y), 0.5)
 q.med <- quantile(path.med, 1-0.1)
 
 ## Calculate the median estimator
-sol.med <- mqs(y, beta = 0.5, q = q.med)
+sol.med <- MQSE(y, beta = 0.5, q = q.med)
 
 ## This gives the same result as
 
-sol.med2 <- mqs(y, beta = 0.5, alpha = 0.1)
+sol.med2 <- MQSE(y, beta = 0.5, alpha = 0.1)
 
 plot(y)
 lines(fitted(sol.med), type = "s", col = "red")

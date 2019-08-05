@@ -5,7 +5,7 @@ MCsimulation <- function(N, n, beta) {
     .Call(`_mqs_MCsimulation`, N, n, beta)
 }
 
-mqs <- function(Y, beta = 0.5, q = NULL, alpha = 0.05, type = "runs") {
-    .Call(`_mqs_mqs`, Y, beta, q, alpha, type)
+MQSE <- function(Y, beta = 0.5, q = NULL, alpha = 0.05, conf = FALSE, type = "runs") {
+    .Call(`_mqs_MQSE`, Y, beta, q, alpha, conf, type)
 }
 
