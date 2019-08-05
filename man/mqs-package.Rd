@@ -18,8 +18,8 @@ fitted.mqs       fit of orginal sampling points from \code{mqs} estimate.
 lines.mqs        plots solutions of \code{mqs} over data.
 lines.mqsBox     plots solutions of \code{mqs.boxplot} over data.
 MCasym           numeric vector with asymptotic monte-carlo simulations for the multiscale statistic.
-MCsimulation     numeric vector with monte-carlo simulations from the multiscale statistic.
-mqs              solution path of mqs estimator.
+MCmqs            numeric vector with monte-carlo simulations from the multiscale statistic.
+mqse             solution path of mqs estimator.
 mqs.boxplot      fitted multiscale box plot.
 }
 }
@@ -35,20 +35,40 @@ mqs.boxplot      fitted multiscale box plot.
 y <- c(rnorm(50), 2+rnorm(50))
 
 ## Obtain threshold value for alpha = 0.1 and beta = 0.5
-path.med <- MCsimulation(1000, length(y), 0.5)
+path.med <- MCmqs(1000, length(y), 0.5)
 
 q.med <- quantile(path.med, 1-0.1)
 
 ## Calculate the median estimator
-sol.med <- mqs(y, 0.5, q.med)
+sol.med <- mqse(y, 0.5, q.med)
 
 plot(y)
 lines(sol.med, col = "red")
 
+## calculate the median estimator + confidence statements
+
+sol.med.conf <- mqse(y, beta = 0.5, q = q.med, conf = TRUE)
+
+# plot data, estimator and confidence statements
+
+plot(y)
+
+polygon(c(1:length(y), rev(1:length(y))), c(sol.med.conf$lowerCB, rev(sol.med.conf$upperCB)), 
+        col = rgb(169,169,169, 100, maxColorValue = 255), border = NA)
+
+lines(fitted(sol.med.conf), col="red", lwd=2, type="s")
+
+for(i in 1:nrow(sol.med.conf$confInt)){
+  axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
+       lwd = 2, tck=0.01, col="blue")
+  axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
+       lwd = 2, tck=-0.01, col="blue")
+}
+
 ## Multiscale Box Plot
 ## Calculate threshold values for alpha = 0.1 and beta = 0.25 and beta = 0.75
-path.low <- MCsimulation(1000, length(y), 0.25)
-path.high <- MCsimulation(1000, length(y), 0.75)
+path.low <- MCmqs(1000, length(y), 0.25)
+path.high <- MCmqs(1000, length(y), 0.75)
 
 q.low <- quantile(path.low, 1-0.1)
 q.high <- quantile(path.high, 1-0.1)

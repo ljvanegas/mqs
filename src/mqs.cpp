@@ -505,7 +505,7 @@ double statistic(int n, double b) {
 }
 
 // [[Rcpp::export]]
-NumericVector MCsimulation(int N, int n, double beta){
+NumericVector MCmqs(int N, int n, double beta){
   NumericVector path(N);
   int i;
   for(i=0;i<N; i++){
@@ -515,6 +515,7 @@ NumericVector MCsimulation(int N, int n, double beta){
 }
 
 //main function
+// [[Rcpp::export]]
 List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "runs"){
   
   int n = Y.length();
@@ -578,8 +579,8 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
   IntegerVector U_whichPos(n);
   IntegerVector U_whichTree(n);
   
-  IntegerVector U_nS(n+1);
-  IntegerVector U_nL(n+1);
+  IntegerVector U_nS(n+1); //number of points in the lower tree (small)
+  IntegerVector U_nL(n+1); //number of points in the upper tree (large)
   for (i = 0; i < n+1; ++i)
     U_nS[i] = 0;
   for (i = 0; i < n+1; ++i)
@@ -618,8 +619,8 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
 
   while (std::isinf(C[n])) {
 
-    ++nseg;
-    lstar = R[nseg-1];
+    ++nseg; //number segment 
+    lstar = R[nseg-1]; 
     
     for(i = R[nseg]; i < n; ++i){
       
@@ -642,9 +643,9 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
         
         if(upp < 1){
           upB[j] = fmin(fmin(upB[j], ubound), upB[j+1]);
-          if(upB[j] == ubound){
-            trackUpp = U_nS[i-j+1]-1;
-            idxUpp = j;
+          if(upB[j] == ubound){ //if the bound is attained save:
+            trackUpp = U_nS[i-j+1]-1; //relative postion (order in interval [j,i])
+            idxUpp = j; //index
           }
           if(upB[j] == upB[j+1]){
             if(Y[j] > upB[j]){
@@ -700,11 +701,9 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
         //only Koenker
         if(type == "koenker"){
           aux_sum[j] = aux_sum[j+1];
-          
           if(i!=j){
-            if(Y[j] < aux_qu[j]){
+            if(Y[j] < aux_qu[j])
               aux_sum[j] = aux_sum[j]+Y[j];
-            }
             
             if(aux_qu[j] > aux_qu[j+1]){
               aux_sum[j] = aux_sum[j]+aux_qu[j+1];
@@ -712,7 +711,6 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
             
             if(aux_qu[j] < aux_qu[j+1] && Y[j] != aux_qu[j]){
               aux_sum[j] = aux_sum[j]-aux_qu[j];
-              
             }
           }
         }
@@ -790,14 +788,12 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
           runs = add_runs(b_lowtrees, b_idxlow, b_whichTree, b_nS, b_nL, aux_qu[j+1], aux_idx[j+1], beta, j, i, runs);
         }
         
-        //only Koenker
+        //only koenker
         if(type == "koenker"){
           aux_sum[j] = aux_sum[j+1];
-          
           if(i!=j){
-            if(Y[j] < aux_qu[j]){
+            if(Y[j] < aux_qu[j])
               aux_sum[j] = aux_sum[j]+Y[j];
-            }
             
             if(aux_qu[j] > aux_qu[j+1]){
               aux_sum[j] = aux_sum[j]+aux_qu[j+1];
@@ -805,13 +801,12 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
             
             if(aux_qu[j] < aux_qu[j+1] && Y[j] != aux_qu[j]){
               aux_sum[j] = aux_sum[j]-aux_qu[j];
-              
             }
           }
         }
         
         //if the we don't add a c.p.
-        if(loB[j] <= upB[j]){
+        if(loB[j] <= upB[j]){ //check if the interval is empty
           
           s = aux_pos[j]+S[j];
           
@@ -825,7 +820,8 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
           
           //Koenker 
           if(type == "koenker"){
-            aux_c = beta*(sum[i+1]-sum[j]-(i-j+1)*aux_qu[j])-aux_sum[j]+aux_qu[j]*(aux_pos[j]-1)+C[j];
+            aux_c = beta*(sum[i+1]-sum[j]-(i-j+1)*aux_qu[j])-aux_sum[j]+aux_qu[j]*(aux_pos[j])+C[j];
+            //printf("i %d j %d 1 %f auxsum %f othersum %f aux_c %f \n",i,j,beta*(sum[i+1]-sum[j]-(i-j+1)*aux_qu[j]), aux_sum[j], aux_qu[j]*(aux_pos[j]), aux_c);
             
             if (aux_c < C[i+1]) {
               
@@ -840,7 +836,10 @@ List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "r
             sigma2 = (mu-1)*(mu-2)/(i+1);
             if(mu < 3){
               aux_c = - R::dbinom(s, i+1, beta,1);
-            }else aux_c = log(sqrt(2*pi*sigma2))+pow((u+1-mu), 2)/sigma2-(R::dbinom(s, i+1, beta, 1));
+            }else aux_c = log(sqrt(2*pi*sigma2))+pow((u+1-mu), 2)/sigma2-(R::dbinom(s, i+1, beta, 1)); //update the cost
+            //if(i == n-1){
+            //printf("i %d j %d s %d u %d aux_c %f\n ",i,j, s, u, aux_c);
+            //}
           
             if (aux_c < C[i+1]) {
             
@@ -1134,19 +1133,16 @@ List mqsConf(NumericVector Y, double beta = 0.5, double q = 0, std::string type 
         //only Koenker
         if(type == "koenker"){
           aux_sum[j] = aux_sum[j+1];
-          
           if(i!=j){
-            if(Y[j] < aux_qu[j]){
+            if(Y[j] < aux_qu[j])
               aux_sum[j] = aux_sum[j]+Y[j];
-            }
-            
+          
             if(aux_qu[j] > aux_qu[j+1]){
               aux_sum[j] = aux_sum[j]+aux_qu[j+1];
             }
-            
+          
             if(aux_qu[j] < aux_qu[j+1] && Y[j] != aux_qu[j]){
               aux_sum[j] = aux_sum[j]-aux_qu[j];
-              
             }
           }
         }
@@ -1238,11 +1234,9 @@ List mqsConf(NumericVector Y, double beta = 0.5, double q = 0, std::string type 
         //only Koenker
         if(type == "koenker"){
           aux_sum[j] = aux_sum[j+1];
-          
           if(i!=j){
-            if(Y[j] < aux_qu[j]){
+            if(Y[j] < aux_qu[j])
               aux_sum[j] = aux_sum[j]+Y[j];
-            }
             
             if(aux_qu[j] > aux_qu[j+1]){
               aux_sum[j] = aux_sum[j]+aux_qu[j+1];
@@ -1250,7 +1244,6 @@ List mqsConf(NumericVector Y, double beta = 0.5, double q = 0, std::string type 
             
             if(aux_qu[j] < aux_qu[j+1] && Y[j] != aux_qu[j]){
               aux_sum[j] = aux_sum[j]-aux_qu[j];
-              
             }
           }
         }
@@ -1270,7 +1263,7 @@ List mqsConf(NumericVector Y, double beta = 0.5, double q = 0, std::string type 
           
           //Koenker 
           if(type == "koenker"){
-            aux_c = beta*(sum[i+1]-sum[j]-(i-j+1)*aux_qu[j])-aux_sum[j]+aux_qu[j]*(aux_pos[j]-1)+C[j];
+            aux_c = beta*(sum[i+1]-sum[j]-(i-j+1)*aux_qu[j])-aux_sum[j]+aux_qu[j]*(aux_pos[j])+C[j];
             
             if (aux_c < C[i+1]) {
               
@@ -1473,7 +1466,7 @@ for(i = n-1; i > confInt(confInt.length()/2-1,0)-1; i--){
 }
 
 // [[Rcpp::export]]
-List MQSE(NumericVector Y, double beta = 0.5, Rcpp::Nullable<double>  q = R_NilValue, double alpha = 0.05, bool conf = false, std::string type = "runs"){
+List mqse(NumericVector Y, double beta = 0.5, Rcpp::Nullable<double>  q = R_NilValue, double alpha = 0.05, bool conf = false, std::string type = "runs"){
   int n = Y.length();
   double q_aux;
   
@@ -1483,7 +1476,7 @@ List MQSE(NumericVector Y, double beta = 0.5, Rcpp::Nullable<double>  q = R_NilV
       Environment env("package:mqs");
       p = env["MCasym"];
     }
-    else{p = MCsimulation(10000,n,beta);}
+    else{p = MCmqs(10000,n,beta);}
     
     int pos = 1001*(1-alpha);
     q_aux = p[pos-1];

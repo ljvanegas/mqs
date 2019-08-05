@@ -1,6 +1,6 @@
 # extracts estimator from solution
 
-fitted.mqs = function(object, ...){
+fitted.mqs = function(object,...){
   value=object[[1]]
   bounds=object[[2]]
   l=length(object[[1]])

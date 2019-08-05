@@ -8,11 +8,11 @@ Plots lines with the mqs multiscale boxplot for given serial data.
 \method{lines}{mqsBox}(x,...)
 }
 \arguments{
-  \item{x}{solution of \code{\link{mqs}}}
+  \item{x}{solution of \code{\link{mqse}}}
   \item{...}{as in generic method.}
 }
 
-\seealso{\code{\link{mqs}}, \code{\link{mqs.boxplot}}, \code{\link{MCsimulation}}}
+\seealso{\code{\link{mqse}}, \code{\link{mqs.boxplot}}, \code{\link{MCmqs}}}
 \examples{
 ## create a random example
 y <- c(rnorm(100), rnorm(100, 2))

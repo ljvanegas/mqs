@@ -5,22 +5,36 @@
 
 using namespace Rcpp;
 
-// MCsimulation
-NumericVector MCsimulation(int N, int n, double beta);
-RcppExport SEXP _mqs_MCsimulation(SEXP NSEXP, SEXP nSEXP, SEXP betaSEXP) {
+// MCmqs
+NumericVector MCmqs(int N, int n, double beta);
+RcppExport SEXP _mqs_MCmqs(SEXP NSEXP, SEXP nSEXP, SEXP betaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(MCsimulation(N, n, beta));
+    rcpp_result_gen = Rcpp::wrap(MCmqs(N, n, beta));
     return rcpp_result_gen;
 END_RCPP
 }
-// MQSE
-List MQSE(NumericVector Y, double beta, Rcpp::Nullable<double> q, double alpha, bool conf, std::string type);
-RcppExport SEXP _mqs_MQSE(SEXP YSEXP, SEXP betaSEXP, SEXP qSEXP, SEXP alphaSEXP, SEXP confSEXP, SEXP typeSEXP) {
+// mqs
+List mqs(NumericVector Y, double beta, double q, std::string type);
+RcppExport SEXP _mqs_mqs(SEXP YSEXP, SEXP betaSEXP, SEXP qSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(mqs(Y, beta, q, type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mqse
+List mqse(NumericVector Y, double beta, Rcpp::Nullable<double> q, double alpha, bool conf, std::string type);
+RcppExport SEXP _mqs_mqse(SEXP YSEXP, SEXP betaSEXP, SEXP qSEXP, SEXP alphaSEXP, SEXP confSEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,14 +44,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< bool >::type conf(confSEXP);
     Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(MQSE(Y, beta, q, alpha, conf, type));
+    rcpp_result_gen = Rcpp::wrap(mqse(Y, beta, q, alpha, conf, type));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mqs_MCsimulation", (DL_FUNC) &_mqs_MCsimulation, 3},
-    {"_mqs_MQSE", (DL_FUNC) &_mqs_MQSE, 6},
+    {"_mqs_MCmqs", (DL_FUNC) &_mqs_MCmqs, 3},
+    {"_mqs_mqs", (DL_FUNC) &_mqs_mqs, 4},
+    {"_mqs_mqse", (DL_FUNC) &_mqs_mqse, 6},
     {NULL, NULL, 0}
 };
 
