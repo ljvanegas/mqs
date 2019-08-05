@@ -1,0 +1,12 @@
+Package: mqs
+Type: Package
+Title: Multiscale Quantile Segmentation
+Version: 1.0
+Date: 2018-04-07
+Author: Laura Jula Vanegas
+Maintainer: Laura Jula Vanegas <ljulava@mathematik.uni-goettingen.de>
+Description: Segments univariate serial data into regions of constant beta-quantile, for given beta, where neither the number nor the location of jumps are known.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.15)
+LinkingTo: Rcpp
+LazyData: true

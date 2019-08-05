@@ -1,0 +1,8 @@
+useDynLib(mqs, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
+importFrom("graphics", "lines")
+importFrom("stats", "fitted")
+S3method(fitted, mqs)
+S3method(lines, mqs)
+S3method(lines, mqsBox)
