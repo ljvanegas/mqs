@@ -515,7 +515,6 @@ NumericVector MCmqs(int N, int n, double beta){
 }
 
 //main function
-// [[Rcpp::export]]
 List mqs(NumericVector Y, double beta = 0.5, double q = 0, std::string type = "runs"){
   
   int n = Y.length();

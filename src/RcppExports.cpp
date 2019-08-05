@@ -18,20 +18,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// mqs
-List mqs(NumericVector Y, double beta, double q, std::string type);
-RcppExport SEXP _mqs_mqs(SEXP YSEXP, SEXP betaSEXP, SEXP qSEXP, SEXP typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< double >::type q(qSEXP);
-    Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(mqs(Y, beta, q, type));
-    return rcpp_result_gen;
-END_RCPP
-}
 // mqse
 List mqse(NumericVector Y, double beta, Rcpp::Nullable<double> q, double alpha, bool conf, std::string type);
 RcppExport SEXP _mqs_mqse(SEXP YSEXP, SEXP betaSEXP, SEXP qSEXP, SEXP alphaSEXP, SEXP confSEXP, SEXP typeSEXP) {
@@ -51,7 +37,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mqs_MCmqs", (DL_FUNC) &_mqs_MCmqs, 3},
-    {"_mqs_mqs", (DL_FUNC) &_mqs_mqs, 4},
     {"_mqs_mqse", (DL_FUNC) &_mqs_mqse, 6},
     {NULL, NULL, 0}
 };
