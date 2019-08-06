@@ -14,6 +14,8 @@ devtools::install_github("ljvanegas/mqs")
 ```
 You can then load the mqs package with `library(mqs)`.
 
+An example on how to use mqs on simulated data can be found in the jupyter notebook mqs.ipynb.
+
 ## Contact
 
 For further information or suggestions you can contact us at ljulava(at)gwdg(dot)de.
