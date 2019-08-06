@@ -28,5 +28,5 @@ q.high <- quantile(path.high, 1-0.1)
 bp <- mqs.boxplot(y, c(q.low, q.med, q.high))
 
 plot(y)
-lines(bp, lwd =2, col = "red")
+lines(bp)
 }

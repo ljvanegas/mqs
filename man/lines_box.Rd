@@ -22,5 +22,5 @@ sol <- mqs.boxplot(y, q = c(1.2452, 1.2671, 1.2983))
 
 #Plot it
 plot(y)
-lines(sol, lwd = 2, col ="red")
+lines(sol)
 }
