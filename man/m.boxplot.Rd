@@ -2,12 +2,13 @@
 \alias{mqs.boxplot}
 \title{Multiscale box plot}
 \description{Returns a multiscale box plot for given observations.}
-\usage{mqs.boxplot(y, q = NULL, alpha = 0.05, type = "runs")}
+\usage{mqs.boxplot(y, q = NULL, alpha = 0.05, type = "runs", intersect = FALSE)}
 \arguments{
   \item{y}{numeric vector containing the serial data}
   \item{q}{numeric vector containing the threshold parameters to be used for the lower, middle and upper quantiles. If missing it calculates the threshold for the given level alpha.}
   \item{alpha}{numeric confidence level in (0,1).}
   \item{type}{specifies loss function for final estimate with multiscale constraint. Currently "runs" and "koenker" available}
+  \item{intersect}{set to FALSE if quantiles should not intersect.}
 }
 \value{list of three numeric vectors of same length as y, containing the fitted estimats for the 0.25- 0.5- and 0.75- quantiles respectively.}
 \seealso{\code{\link{fitted.mqs}}, \code{\link{mqse}}, \code{\link{MCmqs}}}
