@@ -50,11 +50,15 @@ polygon(c(1:length(y), rev(1:length(y))), c(sol.med.conf$lowerCB, rev(sol.med.co
 
 lines(fitted(sol.med.conf), col="red", lwd=2)
 
-for(i in 1:nrow(sol.med.conf$confInt)){
-  axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
-       lwd = 2, tck=0.01, col="blue")
-  axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
-       lwd = 2, tck=-0.01, col="blue")
+#Plot confidence intervals, if there is any c.p.
+if(length(sol.med.conf$left)>2){
+lines(fitted(sol.med.conf), col="red", lwd=2)
+  for(i in 1:nrow(sol.med.conf$confInt)){
+    axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
+         lwd = 2, tck=0.01, col="blue")
+    axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
+         lwd = 2, tck=-0.01, col="blue")
+  }
 }
 
 }
