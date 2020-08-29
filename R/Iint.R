@@ -10,6 +10,7 @@
   changed2 <- logical(nrow(i2))
   changed3 <- logical(nrow(i3))
   
+  if(nrow(i1)!=0 && nrow(i2)!=0 && nrow(i3)!=0){
   #intersect the conf intervals and assign new c.p.s
   for(k in 1:nrow(i1)){
     #check intersections i1 i2
@@ -131,10 +132,103 @@
       }
     }
   }
+  }
+  else if (nrow(i2) != 0 && nrow(i3) != 0){
+    for(i in 1:nrow(i2)){
+    for(l in 1:nrow(i3)){
+      #check intersections of i2 i3 only
+      
+      if(((i3[l,1]<=i2[i,1] && i3[l,2]>=i2[i,1])||(i3[l,1]<=i2[i,2] && i3[l,1]>=i2[i,1])) && changed2[i] == 0 && changed3[l] == 0){
+        
+        i2[i,1] <- max(i2[i,1],i3[l,1])
+        i2[i,2] <- min(i2[i,2],i3[l,2])
+        i3[l,] <- i2[i,]
+        
+        #if there is intersection asign mean c.p.
+        leftaux <- floor(mean(c(s2$left[i+1], s3$left[l+1])))
+        
+        if(leftaux < i2[i,1]){
+          s2$left[i+1] <- i2[i,1]
+          s3$left[l+1] <- i2[i,1]
+        }
+        
+        if(leftaux > i2[i,2]){
+          s2$left[i+1] <- i2[i,2]
+          s3$left[l+1] <- i2[i,2]
+        }
+        else{
+          s2$left[i+1] <- leftaux
+          s3$left[l+1] <- leftaux
+        }
+        break
+      }
+      
+    }
+    }
+  }
+  else if (nrow(i1) != 0 && nrow(i3) != 0){
+    for(k in 1:nrow(i1)){
+      for(l in 1:nrow(i3)){
+        if(((i3[l,1]<=i1[k,1] && i3[l,2]>=i1[k,1])||(i3[l,1]<=i1[k,2] && i3[l,1]>=i1[k,1])) && changed1[k] == 0 && changed3[l] == 0){
+          
+          i1[k,1] <- max(i1[k,1],i3[l,1])
+          i1[k,2] <- min(i1[k,2],i3[l,2])
+          i3[l,] <- i1[k,]
+          
+          #if there is intersection asign mean c.p.
+          leftaux <- floor(mean(c(s1$left[k+1], s3$left[l+1])))
+          
+          if(leftaux < i1[k,1]){
+            s1$left[k+1] <- i1[k,1]
+            s3$left[l+1] <- i1[k,1]
+          }
+          
+          else if(leftaux > i1[k,2]){
+            s1$left[k+1] <- i1[k,2]
+            s3$left[l+1] <- i1[k,2]
+          }
+          else{
+            s1$left[k+1] <- leftaux
+            s3$left[l+1] <- leftaux
+          }
+          break
+        }
+        
+      }
+    }
+  }
+  else if (nrow(i1) != 0 && nrow(i2) != 0){
+    for(k in 1:nrow(i1)){
+      for(i in 1:nrow(i2)){
+        if(((i2[i,1]<=i1[k,1] && i2[i,2]>=i1[k,1]) || (i2[i,1]<=i1[k,2] && i2[i,1]>=i1[k,1])) && changed1[k] == 0 && changed2[i] == 0){
+          i1[k,1] <- max(i1[k,1],i2[i,1])
+          i1[k,2] <- min(i1[k,2],i2[i,2])
+          i2[i,] <- i1[k,]
+          #if there is intersection asign mean c.p.
+          leftaux <- floor(mean(c(s1$left[k+1], s2$left[i+1])))
+          
+          if(leftaux < i1[k,1]){
+            s1$left[k+1] <- i1[k,1]
+            s2$left[i+1] <- i1[k,1]
+          }
+          else if(leftaux > i1[k,2]){
+            s1$left[k+1] <- i1[k,2]
+            s2$left[i+1] <- i1[k,2]
+          }
+          else{
+            s1$left[k+1] <- leftaux
+            s2$left[i+1] <- leftaux
+          }
+        
+      }
+    }
+    }
+  }
   
   #asign new quantile values
   
   #med int
+  if(length(s2$left)>2){
   for(i in 2:length(s2$left)){
     v <- quantile(data[s2$left[i-1]:(s2$left[i]-1)], 0.5)
     for(k in (s2$left[i-1]):(s2$left[i]-1)){
@@ -163,9 +257,11 @@
       s2$value[length(s2$left)]  <- v
     }
   }
+  }
 
   #low int
-
+  
+  if(length(s1$left)>2){
   for(i in 2:length(s1$left)){
     v <- quantile(data[s1$left[i-1]:(s1$left[i]-1)], 0.25)
     for(k in s1$left[i-1]:(s1$left[i]-1)){
@@ -194,6 +290,7 @@
       s1$value[length(s1$left)]  <- v
     }
   }
+  }
 
   # for(i in 1:n){
   #   if(fitted.mqs(s1)[i]>fitted.mqs(s2)[i] && fitted.mqs(s2)[i]>s1$lowerCB[i]){
@@ -208,6 +305,7 @@
   #   }
   # }
 
+  if(length(s3$left)>2){
   #upp int
   for(i in 2:length(s3$left)){
     v <- quantile(data[s3$left[i-1]:(s3$left[i]-1)], 0.75)
@@ -236,6 +334,7 @@
     else{
       s3$value[length(s3$left)]  <- v
     }
+  }
   }
 
   # for(i in 1:n){
