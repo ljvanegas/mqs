@@ -8,8 +8,8 @@
 \tabular{ll}{
 Package: \tab mqs\cr
 Type: \tab Package\cr
-Version: \tab 1.0-1\cr
-Date: \tab 2018-04-09\cr
+Version: \tab 2.0-1\cr
+Date: \tab 2020-02-09\cr
 License: \tab The GNU General Public License\cr
 }
 Index:
@@ -59,7 +59,7 @@ polygon(c(1:length(y), rev(1:length(y))), c(sol.med.conf$lowerCB, rev(sol.med.co
 lines(fitted(sol.med.conf), col="red", lwd=2, type="s")
 
 #plot confidence intervals
-if(length(sol.med.conf$left)>2){
+if(length(sol.med.conf$left)>1){
   for(i in 1:nrow(sol.med.conf$confInt)){
     axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
          lwd = 2, tck=0.01, col="blue")
