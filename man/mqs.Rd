@@ -15,6 +15,9 @@
 \item{value}{numeric vector containing the fitted function values on each constant segment of the mqs estimator.}
 \item{left}{numeric vector of the same length as value containing the left end of each segment.}
 \item{n}{integer value which equals the length of Y.}
+\item{confInt}{if conf = TRUE, numeric matrix with 2 columns and length(value)-1 rows. Each row represents the left and right confidence bounds for the confidence interval asociated to a change point.}
+\item{lowerCB}{numeric vector of length n containing the lower bound of the confidence band.}
+\item{upperCB}{numeric vector of length n containing the upper bound of the confidence band.}
 }
 \note{For q = NULL and length(Y)<2000 the function performs Monte Carlo simulations as in \code{\link{MCmqs}} to find an appropriate value of q. If length(Y)>2000, it takes the asymptotic Monte Carlo simulations as in \code{\link{MCasym}}.}
 \seealso{\code{\link{fitted.mqs}}, \code{\link{mqs.boxplot}}, \code{\link{MCmqs}}, \code{\link{MCasym}}}
@@ -45,13 +48,12 @@ sol.med.conf <- mqse(y, beta = 0.5, q = q.med, conf = TRUE)
 
 plot(y)
 
+#Plot confidence bands
 polygon(c(1:length(y), rev(1:length(y))), c(sol.med.conf$lowerCB, rev(sol.med.conf$upperCB)), 
         col = rgb(169,169,169, 100, maxColorValue = 255), border =NA)
 
-lines(fitted(sol.med.conf), col="red", lwd=2)
-
 #Plot confidence intervals, if there is any c.p.
-if(length(sol.med.conf$left)>2){
+if(length(sol.med.conf$left)>1){
 lines(fitted(sol.med.conf), col="red", lwd=2)
   for(i in 1:nrow(sol.med.conf$confInt)){
     axis(1, at = c(sol.med.conf$confInt[i,1], sol.med.conf$confInt[i,2]), labels = c("", ""), 
@@ -60,5 +62,4 @@ lines(fitted(sol.med.conf), col="red", lwd=2)
          lwd = 2, tck=-0.01, col="blue")
   }
 }
-
 }
