@@ -1477,12 +1477,15 @@ List mqse(NumericVector Y, double beta = 0.5, Rcpp::Nullable<double>  q = R_NilV
     }
     else{p = MCmqs(10000,n,beta);}
     
-    int pos = 1001*(1-alpha);
-    q_aux = p[pos-1];
+    // get 1-alpha quantile of p
+    std::sort(p.begin(), p.end());
+    int idx = std::floor((1 - alpha) * p.length());
+    q_aux = p[idx];
   }
   else{
     q_aux = as<double>(q);
   }
+  
   
   if(conf){
     return mqsConf(Y, beta, q_aux, type);
